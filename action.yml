@@ -1,0 +1,38 @@
+name: 'Upload dir to S3'
+description: 'Uplaod a dir to S3'
+inputs:
+  source_dir:
+    description: 'source dir (default: dest)'
+    default: 'dest'
+    required: false
+  AWS_ACCESS_KEY_ID:
+    description: 'AWS ACCESS KEY ID'
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: 'AWS SECRET ACCESS KEY'
+    required: true
+  AWS_BUCKET:
+    description: 'AWS BUCKET to deploy'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Repo Name and Branch Name
+      id: get-names
+      run: |
+        BRANCH_NAME=`echo $GITHUB_REF | cut -f3- -d'/'`
+        echo "::set-output name=BRANCH_NAME::$BRANCH_NAME"
+        REPO_NAME=`echo $GITHUB_REPOSITORY | cut -f2 -d'/'`
+        echo "::set-output name=REPO_NAME::$REPO_NAME"
+      shell: bash
+
+    - name: Sync S3
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ap-northeast-1
+        SOURCE_PATH: ${{ inputs.SOURCE_DIR }}
+        DEST_PATH: "s3://${{ inputs.AWS_BUCKET }}/${{ steps.get-names.outputs.REPO_NAME }}/${{ steps.get-names.outputs.BRANCH_NAME }}"
+      run: aws s3 sync $SOURCE_PATH $DEST_PATH
+      shell: bash
