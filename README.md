@@ -19,7 +19,7 @@
     - Organization 共通の secrets を指定することで、Organization 内の設定を共通化できます
 
 # 使い方
-```
+```yaml
 - uses: actions/checkout@v2
 - uses: ClusterVR/s3_pages_action@master
     with:
