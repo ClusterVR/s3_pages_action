@@ -1,9 +1,9 @@
 name: 'Upload dir to S3'
 description: 'Uplaod a dir to S3'
 inputs:
-  source_dir:
+  SOURCE_DIR:
     description: 'source dir (default: dest)'
-    default: 'dest'
+    default: 'html'
     required: false
   AWS_ACCESS_KEY_ID:
     description: 'AWS ACCESS KEY ID'
